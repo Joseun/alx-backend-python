@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-safely_get_value = __import__('101-safely_get_value').safely_get_value
-annotations = safely_get_value.__annotations__
+sum_mixed_list = __import__('6-sum_mixed_list').sum_mixed_list
 
-print("Here's what the mappings should look like")
-for k, v in annotations.items():
-    print( ("{}: {}".format(k, v)))
+print(sum_mixed_list.__annotations__)
+mixed = [5, 4, 3.14, 666, 0.99]
+ans = sum_mixed_list(mixed)
+print(ans == sum(mixed))
+print("sum_mixed_list(mixed) returns {} which is a {}".format(ans, type(ans)))
