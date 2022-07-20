@@ -27,7 +27,7 @@ class TestGithubOrgClient(unittest.TestCase):
         """ Test to Public repo URL"""
         with patch('client.GithubOrgClient._public_repos_url',
                    new_callable=PropertyMock, return_value="COOL") as mm:
-            tpsest_object = GithubOrgClient("org")
+            test_object = GithubOrgClient("org")
             self.assertEqual(test_object._public_repos_url, mm.return_value)
 
     payload = [{"name": "Monday"},
@@ -66,14 +66,21 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         """ Setup method to integration tests """
         cls.get_patcher = patch('requests.get')
-        cls.get_patcher.return_value = cls.__dict__.get('org_payload')
-        cls.get_patcher.start()
+        cls.get_patcher.side_effect = [cls.org_payload, cls.repos_payload]
+        cls.MockClass = cls.get_patcher.start()
 
     def test_public_repos(self):
         """ Integration tests to public_repos method """
-        test_client = client.GithubOrgClient("org")
-        self.assertEqual(test_client.public_repos(),
-                         [repo['name'] for repo in TEST_PAYLOAD[0][2]])
+        test_object = self.MockClass()
+        self.assertEqual(test_object.public_repos(),
+                            [repo for repo in self.expected_repos])
+
+    def test_public_repos_with_license(self, repo: Dict[str, Dict], 
+                                       license_key: str="apache-2.0", expected):
+        """ Test to Static: has_license"""
+        test_object = GithubOrgClient("org")
+        self.assertEqual(test_object.has_license(repo, license_key),
+                         expected)
 
     @classmethod
     def tearDownClass(cls):
