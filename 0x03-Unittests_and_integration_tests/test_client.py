@@ -66,21 +66,21 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         """ Setup method to integration tests """
         cls.get_patcher = patch('requests.get')
-        cls.get_patcher.side_effect = [cls.org_payload, cls.repos_payload]
+        cls.get_patcher.side_effect = cls.org_payload
         cls.MockClass = cls.get_patcher.start()
 
     def test_public_repos(self):
         """ Integration tests to public_repos method """
         test_object = self.MockClass()
         self.assertEqual(test_object.public_repos(),
-                            [repo for repo in self.expected_repos])
+                         [repo for repo in self.expected_repos])
 
-    def test_public_repos_with_license(self, repo: Dict[str, Dict], 
-                                       license_key: str="apache-2.0", expected):
+    def test_public_repos_with_license(self, license_key: str):
         """ Test to Static: has_license"""
-        test_object = GithubOrgClient("org")
-        self.assertEqual(test_object.has_license(repo, license_key),
-                         expected)
+        test_object = self.MockClass()
+        self.assertEqual(test_object.has_license(self.repos_payload,
+                                                 license_key="apache-2.0"),
+                         self.apache2_repos)
 
     @classmethod
     def tearDownClass(cls):
