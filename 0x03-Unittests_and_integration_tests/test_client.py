@@ -27,13 +27,13 @@ class TestGithubOrgClient(unittest.TestCase):
         """ Test to Public repo URL"""
         with patch('client.GithubOrgClient._public_repos_url',
                    new_callable=PropertyMock, return_value="COOL") as mm:
-            test_object = GithubOrgClient("org")
+            tpsest_object = GithubOrgClient("org")
             self.assertEqual(test_object._public_repos_url, mm.return_value)
 
-    payload = [{"name": "Monday"}, 
+    payload = [{"name": "Monday"},
                {"name": "Tuesday"},
-               {"name": "Wednesday"}
-        ]
+               {"name": "Wednesday"}]
+
     @patch('client.get_json', return_value=payload)
     def test_public_repos(self, payloads: MagicMock):
         """ Test to Public repos"""
@@ -56,7 +56,8 @@ class TestGithubOrgClient(unittest.TestCase):
         test_object = GithubOrgClient("org")
         self.assertEqual(test_object.has_license(repo, license_key),
                          expected)
-           
+
+
 @parameterized_class(("org_payload", "repos_payload", "expected_repos",
                       "apache2_repos"), TEST_PAYLOAD)
 class TestIntegrationGithubOrgClient(unittest.TestCase):
